@@ -478,6 +478,25 @@ Authentication schemes defined for the API:
 
 ## Author
 
-
-
-
+## Documentation for Client Generation ##
+### Generate Clients ###
+* Create via Generator in Docker container:
+```
+docker run --rm \
+  -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+  -i https://raw.githubusercontent.com/Alfresco/rest-api-explorer/master/src/main/webapp/definitions/alfresco-core.yaml \
+  -g python \
+  -o /local/alfresco_core_api_client \
+  --package-name alfresco_core_api_client
+```
+#### Fix Bugs ###
+* Bug in code generation with field validator around >12 files with nested quotes!
+* Replace in 2 lines each leading and trailing double quote with single quote: r"...\\"..." ==> r'...\\"...'
+```
+    @field_validator('name')
+    def name_validate_regular_expression(cls, value):
+        """Validates the regular expression"""
+        if not re.match(r"^(?!(.*[\\"\*\\\>\<\?\/\:\|]+.*)|(.*[\.]?.*[\.]+$)|(.*[ ]+$))", value):
+            raise ValueError(r"must validate the regular expression /^(?!(.*[\\"\*\\\>\<\?\/\:\|]+.*)|(.*[\.]?.*[\.]+$)|(.*[ ]+$))/")
+        return value
+```
